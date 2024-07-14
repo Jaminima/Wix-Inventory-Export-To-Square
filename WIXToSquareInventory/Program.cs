@@ -21,9 +21,14 @@
 
             string outputFilePath = Path.Combine(Path.GetDirectoryName(inputFilePath), "output.csv");
 
+            WIXProductRecord[] wixProductRecords = GetWIXProductRecords(inputFilePath);
+        }
+
+        static WIXProductRecord[] GetWIXProductRecords(string inputfile)
+        {
             List<WIXProductRecord> wixProductRecords = new List<WIXProductRecord>();
 
-            using (StreamReader reader = new StreamReader(inputFilePath))
+            using (StreamReader reader = new StreamReader(inputfile))
             {
                 string headerLine = reader.ReadLine();
                 string[] headers = splitRow(headerLine);
@@ -34,7 +39,7 @@
                     string[] fields = splitRow(line);
 
                     var record = new WIXProductRecord(
-                        safeGetValueByHeader("handleId",headers, fields, out string handleId) ? handleId : "",
+                        safeGetValueByHeader("handleId", headers, fields, out string handleId) ? handleId : "",
                         safeGetValueByHeader("fieldType", headers, fields, out string fieldType) ? fieldType : "",
                         safeGetValueByHeader("name", headers, fields, out string name) ? name : "",
                         safeGetValueByHeader("description", headers, fields, out string description) ? description : "",
@@ -48,6 +53,8 @@
                     wixProductRecords.Add(record);
                 }
             }
+
+            return wixProductRecords.ToArray();
         }
 
         static bool safeGetValueByHeader(string header, string[] headers, string[] fields, out string value)
